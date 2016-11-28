@@ -1,0 +1,43 @@
+function complete_OpeningFcn(hObject, eventdata, handles, varargin)
+% Choose default command line output for example5
+handles.output = hObject;
+clc
+% initalize error count and use edit1 object's userdata to store it.
+data.number_errors = 0;
+set(handles.edit1,'UserData',data)
+% Update handles structure
+guidata(hObject, handles);
+% --- Executes on slider movement.
+function slider1_Callback(hObject, eventdata, handles)
+set(handles.edit1,'String',...
+num2str(get(hObject,'Value')));
+% --- Executes during object creation, after setting all properties.
+function slider1_CreateFcn(hObject, eventdata, handles)
+function edit1_Callback(hObject, eventdata, handles)
+val = str2double(get(hObject,'String'));
+% Determine whether val is a number between 0 and 10.
+if isnumeric(val) && length(val)==10 && ...
+val >= get(handles.slider1,'min') && ...
+val <= get(handles.slider1,'max')
+set(handles.slider1,'Value',val);
+else
+% Retrieve and increment the error count.
+% Error count is in the edit text UserData,
+% so we already have its handle.
+data = get(hObject,'UserData');
+data.number_errors = data.number_errors+1;
+% Save the changes.
+set(hObject,'UserData',data);
+% Display new total.
+set(hObject,'String',...
+['You have entered an invalid entry ',...
+num2str(data.number_errors),' times.']);
+% Restore focus to the edit text box after error
+uicontrol(hObject)
+end
+% --- Executes during object creation, after setting all properties.
+function edit1_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'),
+get(0,'defaultUicontrolBackgroundColor'))
+set(hObject,'BackgroundColor','white');
+end
