@@ -1,0 +1,38 @@
+clc,close all,clear all
+k = 0:9.0703e-005:5;
+w=500*pi;
+h=w.*k;
+[x,Fs,nbits]= wavread ('voice');
+y = awgn(x,10,'measured'); % Add white Gaussian noise.
+wavwrite(y,Fs,'noisyvoice')
+wname = 'coif5'; lev = 10;
+tree = wpdec(y,lev,wname);
+det1 = wpcoef(tree,2014);
+sigma = median(abs(det1))/0.6745;
+alpha = 1.8;
+thr = wpbmpen(tree,sigma,alpha)
+keepapp = 1;
+xd = wpdencmp(tree,'s','nobest',thr,keepapp);
+D=crosscorr(x,y);
+z=-20:1:20;
+figure(1)
+subplot(311)
+plot(k,x)
+xlabel('time')
+ylabel('Amplitude')
+title('original signal');
+subplot(312)
+plot(k,y,'k')
+xlabel('time')
+ylabel('Amplitude')
+title('signal with noise');
+subplot(313)
+plot(k,xd,'g')
+xlabel('time')
+ylabel('Amplitude')
+title('signal denoise');
+figure(2)
+plot(z,D)
+title('coif5')
+legend('Correlation @ 0');
+wavwrite(xd,Fs,'voice5')
